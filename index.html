@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Cookie</title>
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+
+	<script defer src="cookie_rain.js"></script>
+	<script defer src="cookie.js"></script>
+	<link rel="stylesheet" href="style.css" media="all">
+</head>
+
+<body>
+	<template id="upgrade-template">
+		<li class="upgrade">
+			<div class="upgrade-image-container">
+				<img class="upgrade-image" src="" alt="Upgrade Image">
+			</div>
+			<h3 class="upgrade-title">MO dasjdklsajdas COOKIES</h3>
+			<div class="upgrade-inner">
+				<button class="upgrade-button"><span class="upgrade-button-price">🍪 420.69</span></button>
+				<button class="upgrade-button-multiplier">x1</button>
+			</div>
+			<div class="upgrade-info">
+				<span class="upgrade-cookies-per-second">🍪/s 0.0</span>
+				<span class="upgrade-ammount">x1</span>
+			</div>
+		</li>
+	</template>
+
+	<div id="cookie-rain">
+	</div>
+
+	<div id="wrapper">
+		<div id="upgrades-container">
+			<div id="upgrades-inner">
+				<div id="upgrades-header"></div>
+				<ul id="upgrades">
+				</ul>
+			</div>
+
+			<div id="tubes-background"></div>
+			<button onclick="openUpgrades()" id="open-upgrades">Upgrades</button>
+		</div>
+
+		<div id="container">
+			<div id="score">0</div>
+			<div id="big-cookie-container">
+				<img onclick="handleCookieClick()" id="big-cookie" src="assets/cookie512x512.png" alt="Big Cookie">
+			</div>
+			<div id="milk"></div>
+		</div>
+
+	</div>
+</body>
+
+</html>

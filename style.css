@@ -1,0 +1,361 @@
+* {
+	padding: 0;
+	margin: 0;
+	outline: 0;
+	box-sizing: border-box;
+}
+
+html, body {
+	height: 100%;
+}
+
+body {
+	background: rgba(155,114,67,1);
+	font-family: 'Roboto', sans-serif;
+	color: #fff;
+}
+
+#cookie-rain {
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+}
+
+#upgrades {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	min-width: 90%;
+}
+
+#upgrades > div {
+	width: 100%;
+}
+
+#score {
+	position: relative;
+	width: 100%;
+	text-align: center;
+	font-size:10vh;
+	transition: transform 100ms;
+
+	z-index: 100;
+	pointer-events: none;
+}
+
+#wrapper {
+	display: flex;
+	height: 100%;
+}
+
+#upgrades-container.open {
+	width: 100%;
+}
+
+#upgrades-container {
+	position: relative;
+	width: 0;
+	transition: width 50ms linear;
+	background: #46331e;
+}
+
+#upgrades-inner {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	align-items: center;
+	overflow-x: hidden;
+}
+
+#upgrades-container #upgrades-header {
+	width: 100%;
+	text-align:center;
+
+	background: rgba(155,114,67,1);
+
+	text-align: center;
+	height: 3.5rem;
+	border-bottom: 2px solid rgba(0, 0, 0, 0.75);
+	box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+#upgrades {
+	padding: 2rem;
+	width: fit-content;
+
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+.upgrade {
+	position: relative;
+	width: 100%;
+	padding: 1.5rem;
+
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+
+	border: 2px solid rgba(0, 0, 0, 0.75);
+	
+	box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	border-radius: 25px;
+	background: rgba(155,114,67,1);
+	font-weight: bold;
+}
+
+.upgrade-title {
+	align-self: center;
+	justify-self: center;
+	white-space: nowrap;
+}
+
+.upgrade-image-container {
+	display: flex;
+	justify-content: center;
+	align-items:center;
+	width: 100%;
+	height: 100%;
+
+	align-self:center;
+	justify-self:center; 
+}
+
+.upgrade-image {
+	width: 100%;
+	max-width: 64px;
+	border-radius: 50%;
+	border: 1px solid black;
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+.upgrade-button {
+	display: flex;
+	flex-direction: column;
+	align-self: center;
+	justify-self: center;
+
+	gap: 2px;
+
+	padding: 0.5rem 1.5rem;
+
+	color: #fff;
+	background: #436c9b;
+	border: 3px solid #314e70;
+	border-radius: 10px;
+	cursor: pointer;
+	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+
+	font-weight: bold;
+	font-size: 0.9rem;
+
+	white-space: nowrap;
+}
+
+.upgrade-button.disabled {
+	filter: brightness(0.5);
+}
+
+.upgrade-inner {
+	display: grid;
+	grid-template-columns: 2fr 1fr;
+	gap: 0.5rem;
+	justify-content: center;
+	width: 100%;
+}
+
+.upgrade-inner button{
+	width: 100%;
+}
+
+.upgrade-button-multiplier {
+	display: block;
+	padding: 0.5rem 0.5rem;
+	color: #fff;
+	background: #436c9b;
+	border: 3px solid #314e70;
+	border-radius: 10px;
+	cursor: pointer;
+	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+	font-size: 0.9rem;
+}
+
+.upgrade-button span {
+	display: block;
+}
+
+.upgrade-info {
+	display: flex;
+	flex-direction: column;
+
+	justify-content: space-between;
+	align-items: end;
+
+	padding: 0 1rem;
+
+	position: absolute;
+	top: 1rem;
+	right: 0;
+	animation: wobble 500ms alternate ease-in-out infinite;
+	font-weight: bold;
+}
+
+@keyframes wobble {
+	from {
+		transform: scale(1.0), rotate(-.1deg);
+	}
+	to {
+		transform: scale(1.05);
+	}
+}
+
+#tubes-background {
+	position: absolute;
+	top: 0px;
+	right: -28px;
+	width: 28px;
+	height: 100%;
+	background: url("assets/tube.jpg");
+	z-index: 10;
+}
+
+#open-upgrades.open {
+	right: 0;
+	left: unset;
+	border-radius: 10px 0 0 10px;
+}
+
+button {
+	cursor: pointer;
+	transition: filter 50ms linear, transform 50ms linear;
+}
+
+button:not(.disabled):hover {
+	filter: brightness(0.9);
+	transform: scale(1.05);
+}
+
+#open-upgrades {
+	position: absolute;
+	top: 25px;
+	left: calc(100% + 28px); /* 100% + width of the tubes */
+
+	padding: 0.5rem 0.5rem;
+	color: #fff;
+	background: #436c9b;
+	border: 3px solid #314e70;
+
+	border-radius: 0 10px 10px 0;
+
+	cursor: pointer;
+	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+
+	/* font-size: 1.2rem; */
+	font-size: 4vh;
+	font-weight: bold;
+}
+
+#container {
+	padding-top: 2rem;
+	width: 100%;
+	height: 100%;
+	
+	display: grid;
+	grid-template-rows: 1fr 1fr 1fr;
+	align-items: center;
+	justify-items: center;
+
+	background: radial-gradient(circle, rgba(231,164,87,1) 0%, rgba(155,114,67,1) 80%);
+
+	overflow-x: hidden;
+}
+
+#big-cookie-container {
+	width: max(20vw, 30vh);
+	transition: transform 50ms linear;
+}
+
+#big-cookie {
+	display: block;
+	width: 100%;
+
+	animation: spin-clockwise 4s infinite linear;
+	cursor: pointer;
+}
+
+.cookie {
+	position: absolute;
+	width: 2vw;
+
+    animation-duration: 4000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+.spin-clockwise {
+    animation-name: spin-clockwise;
+}
+
+.spin-counterclockwise {
+    animation-name: spin-counterclockwise;
+}
+
+@keyframes spin-clockwise {
+    from {transform:rotate(0deg);}
+    to {transform:rotate(360deg);}
+}
+
+@keyframes spin-counterclockwise {
+    from {transform:rotate(0deg);}
+    to {transform:rotate(-360deg);}
+}
+
+#milk {
+	min-width: 100%;
+	height: 100%;
+
+	align-self: end;
+	background: rgba(255, 255, 255, 0.9);
+	animation: milk-animation 4s ease-in-out infinite;
+}
+
+/* Fluid animation from here: https://codepen.io/techgirldiaries/pen/LYWPJPN */
+@keyframes milk-animation {
+	0%,
+	100% {
+		clip-path: polygon(
+			0% 45%,
+			16% 44%,
+			33% 50%,
+			54% 60%,
+			70% 61%,
+			84% 59%,
+			100% 52%,
+			100% 100%,
+			0% 100%
+		);
+	}
+
+	50% {
+		clip-path: polygon(
+			0% 60%,
+			15% 65%,
+			34% 66%,
+			51% 62%,
+			67% 50%,
+			84% 45%,
+			100% 46%,
+			100% 100%,
+			0% 100%
+		);
+	}
+}
+
+
+@media screen and (max-width: 800px) {
+	#container.open {
+		width: 0;
+	}
+}
