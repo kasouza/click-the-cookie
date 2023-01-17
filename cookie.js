@@ -1,3 +1,10 @@
+const COOKIE_RAIN_COUNT = 50
+const RAINING_COOKIE_MIN_SPEED = 4
+const RAINING_COOKIE_MAX_SPEED = 10
+const RAINING_COOKIE_MAX_ACCELERATION = 1
+const RAINING_COOKIE_MIN_ACCELERATION = 0.75
+const RAINING_COOKIE_MAX_WIDTH = 0.015 // Percentage of viewport width
+
 const BIG_COOKIE_ANIMATION_DURATION = 50
 
 const multiplierOrder = [
@@ -38,18 +45,45 @@ let gameData = {
   upgrades: {}
 }
 
+const rainingCookies = []
+
 let upgradesOpen = false
+let startTime = 0
+
+function createRainingCookie() {
+  const element = document.createElement('img')
+  element.className = `cookie ${Math.random() >= 0.5 ? 'spin-clockwise' : 'spin-counterclockwise'}`
+  element.src = 'assets/cookie32x32.png'
+
+  UI.cookieRain.appendChild(element)
+
+  return {
+    x: 0,
+    y: window.innerHeight + 1,
+    ySpeed: 0,
+    yAcelleration: 0,
+    element
+  }
+}
+
+function cookieRain() {
+  rainingCookies.forEach(cookie => {
+    // Only reset cookies that are out of the window or completely stopped
+    if (cookie.y > window.innerHeight || cookie.ySpeed <= 0) {
+      cookie.x = Math.random() * window.innerWidth
+      cookie.y = -(Math.random() * 0.5 * window.innerHeight)
+      cookie.ySpeed = Math.max(Math.random() * RAINING_COOKIE_MAX_SPEED, RAINING_COOKIE_MIN_SPEED)
+      cookie.yAcceleration = -(Math.max(Math.random() * RAINING_COOKIE_MAX_ACCELERATION, RAINING_COOKIE_MIN_ACCELERATION))
+    }
+  })
+}
+
 
 function openUpgrades() {
   upgradesOpen = !upgradesOpen
   UI.upgradesContainer.classList.toggle('open')
   UI.container.classList.toggle('open')
   UI.openUpgrades.classList.toggle('open')
-
-  // UI.upgradesContainer.style.width = upgradesOpen ? '100%' : '0'
-  // if (window.innerWidth < 800) {
-    // UI.container.style.width = upgradesOpen ? '0' : '100%'
-  // }
 }
 
 function handleCookieClick() {
@@ -70,26 +104,6 @@ function handleCookieClick() {
   setTimeout(() => {
     UI.bigCookieContainer.style.transform = 'scale(1.0)';
   }, BIG_COOKIE_ANIMATION_DURATION)
-}
-
-function windowResizeCallback() {
-  resetRainingCookiesXCoordinates()
-}
-
-let start = 0
-function update(now) {
-  const dt = (now - start) / 1000
-  start = now
-
-  UI.score.innerText = Math.floor(gameData.score)
-
-  for (const upgrade in upgrades) {
-    updateUpgradeUI(upgrade, upgradeElements[upgrade])
-    gameData.score += calculateCookiesPerSecond(upgrades[upgrade].baseCookiesPerSecond, gameData.upgrades[upgrade].ammount) * dt
-  }
-
-  updateRainingCookies()
-  requestAnimationFrame(update)
 }
 
 function calculatePrice(basePrice, ammount) {
@@ -132,7 +146,7 @@ function createUpgradeUI(upgrade) {
   })
 
   updateUpgradeUI(upgrade, element)
-  
+
   // This wrapper div is needed to store a reference to the actual element in the DOM, otherwise it would be just a DocumentFragment and acessing it would be meaningless (I guess)
   const div = document.createElement('div')
   div.appendChild(element)
@@ -154,7 +168,7 @@ function updateUpgradeUI(upgrade, upgradeElement) {
 
   const price = calculatePrice(upgradeInfo.basePrice, upgradeData.ammount)
   const ammountToBuy = upgradeData.multiplier > 0 ? upgradeData.multiplier : Math.floor(gameData.score / price)
-  const totalPrice =  price * ammountToBuy
+  const totalPrice = price * ammountToBuy
 
   multiplierElem.innerText = multiplier > 0 ? `x${multiplier}` : 'MAX'
   button.innerText = `🍪${totalPrice}`
@@ -180,7 +194,49 @@ function saveGameData() {
   localStorage.setItem('gameData', JSON.stringify(gameData))
 }
 
+function windowResizeCallback() {
+  rainingCookies.forEach(cookie => {
+    cookie.x = Math.random() * window.innerWidth
+  })
+}
+
+function updateRainingCookies() {
+  rainingCookies.forEach(cookie => {
+    if (cookie.y <= window.innerHeight && cookie.ySpeed > 0) {
+      cookie.y += cookie.ySpeed
+      cookie.ySpeed += cookie.yAcelleration
+    }
+
+    const yPercent = 0.9 * (window.innerHeight - cookie.y + (window.innerHeight * 0.3)) / window.innerHeight
+
+    cookie.element.style.width = `${yPercent * window.innerWidth * RAINING_COOKIE_MAX_WIDTH}px`
+    cookie.element.style.left = `${cookie.x}px`
+    cookie.element.style.top = `${cookie.y}px`
+    cookie.element.style.opacity = `${yPercent}`
+  })
+}
+
+function update(now) {
+  // Delta timing
+  const dt = (now - startTime) / 1000
+  startTime = now
+
+  // Update UI
+  UI.score.innerText = Math.floor(gameData.score)
+
+  for (const upgrade in upgrades) {
+    updateUpgradeUI(upgrade, upgradeElements[upgrade])
+    gameData.score += calculateCookiesPerSecond(upgrades[upgrade].baseCookiesPerSecond, gameData.upgrades[upgrade].ammount) * dt
+  }
+
+  updateRainingCookies()
+
+  // Loop
+  requestAnimationFrame(update)
+}
+
 function main() {
+  // Get references to DOM elements
   UI.container = document.getElementById('container')
   UI.score = document.getElementById('score')
   UI.cookieRain = document.getElementById('cookie-rain')
@@ -190,6 +246,15 @@ function main() {
   UI.upgrades = document.getElementById('upgrades')
   UI.openUpgrades = document.getElementById('open-upgrades')
 
+  // Events
+  window.addEventListener('resize', windowResizeCallback)
+
+  // Init raining cookies
+  for (let i = 0; i < COOKIE_RAIN_COUNT; i++) {
+    rainingCookies.push(createRainingCookie())
+  }
+
+  // Initialize Game Data and UI
   for (const upgrade in upgrades) {
     gameData.upgrades[upgrade] = {
       ammount: 0,
@@ -198,17 +263,15 @@ function main() {
     upgradeElements[upgrade] = createUpgradeUI(upgrade)
   }
 
-  window.addEventListener('resize', windowResizeCallback)
-
-  initCookieRain(UI.cookieRain)
-
   loadGameData()
 
+  // Setup data saving
   setInterval(() => {
     saveGameData()
   }, 5000)
 
-  start = performance.now()
+  // Start game loop
+  startTime = performance.now()
   requestAnimationFrame(update)
 }
 
