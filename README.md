@@ -6,3 +6,5 @@ This game is a Cookie Clicker clone I coded in a couple days just for fun. It's 
 I might actually change the game theme to something different to make it less of just a clone of Cookie Clicker.
 
 To test just clone the repo and open the index.html file in your browser.
+
+Feel free to use the code however you want, no need to ask or anything.
